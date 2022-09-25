@@ -16,6 +16,10 @@ export class Browser {
     return this.driver.findElement(By.css(selector));
   }
 
+  public findElementBySelector(selector: By): WebElementPromise {
+    return this.driver.findElement(selector);
+  }
+
   public async clearCookies(url?: string): Promise<void> {
     if (url) {
       const currentUrl = await this.driver.getCurrentUrl();
@@ -31,13 +35,15 @@ export class Browser {
     await this.waitAny(condition);
   }
 
-  public async waitAny(conditions: WaitCondition | WaitCondition[]): Promise<void> {
-    const all = (!(conditions instanceof Array)) ? [ conditions ] : conditions;
+  public async waitAny(
+    conditions: WaitCondition | WaitCondition[]
+  ): Promise<void> {
+    const all = !(conditions instanceof Array) ? [conditions] : conditions;
 
     await this.driver.wait(async () => {
       for (const condition of all) {
         try {
-          if (await condition(this) === true) {
+          if ((await condition(this)) === true) {
             return true;
           }
           continue;
