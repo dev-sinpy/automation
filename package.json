@@ -4,8 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "tdd": "rm -rf dist && tsc && mocha -t 10000 dist/tests",
-    "bdd": "rm -rf dist && tsc && mocha -t 10000 dist/specs"
+    "test": "rm -rf dist && tsc && mocha -t 10000 dist/tests"
   },
   "keywords": [],
   "author": "Guilherme Oenning",
