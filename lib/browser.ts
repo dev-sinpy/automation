@@ -1,6 +1,12 @@
-import 'chromedriver';
-import { Builder, ThenableWebDriver, WebElement, By, WebElementPromise } from 'selenium-webdriver';
-import { Page, NewablePage, WebComponent, WaitCondition } from './';
+import "chromedriver";
+import {
+  Builder,
+  ThenableWebDriver,
+  WebElement,
+  By,
+  WebElementPromise,
+} from "selenium-webdriver";
+import { Page, NewablePage, WebComponent, WaitCondition } from "./";
 
 export class Browser {
   private driver: ThenableWebDriver;
@@ -31,8 +37,14 @@ export class Browser {
     }
   }
 
-  public async wait(condition: WaitCondition) {
-    await this.waitAny(condition);
+  public async sleep(timeout: number) {
+    await this.driver.sleep(timeout);
+  }
+
+  public async wait(condition: any, timeout: number = 3000): Promise<any> {
+    return this.driver
+      .wait(condition, timeout)
+      .catch(() => console.log("error"));
   }
 
   public async waitAny(

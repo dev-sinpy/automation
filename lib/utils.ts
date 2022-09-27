@@ -12,13 +12,10 @@ export function findBy(selector: By | string) {
       configurable: true,
       enumerable: true,
       get: function () {
-        let promise;
         if (typeof selector === "string") {
-          promise = (this as any).browser.findElement(selector);
-        } else {
-          promise = (this as any).browser.findElementBySelector(selector);
+          return new type(this.browser, By.css(selector));
         }
-        return new type(promise, selector);
+        return new type(this.browser, selector);
       },
     });
   };

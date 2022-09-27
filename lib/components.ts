@@ -1,41 +1,58 @@
-import { WebElementPromise } from 'selenium-webdriver';
+import { By, WebElement, WebElementPromise, until } from "selenium-webdriver";
+import { Browser } from ".";
 
 export class WebComponent {
-  constructor(protected element: WebElementPromise, public selector: string) { }
+  constructor(protected browser: Browser, public selector: By) {}
 
   public async click() {
     try {
-      return await this.element.click();
+      const element = await this.getElement();
+      return await element.click();
     } catch (clickErr) {
       try {
-        await this.element.getDriver().executeScript('arguments[0].click();', this.element);
+        const element = await this.getElement();
+        await element
+          .getDriver()
+          .executeScript("arguments[0].click();", element);
       } catch (jsErr) {
         throw clickErr;
       }
     }
   }
 
+  public async getElement(): Promise<WebElement> {
+    await this.browser.wait(until.elementLocated(this.selector));
+    return this.browser.findElementBySelector(this.selector);
+  }
+
   public async isDisplayed() {
     try {
-      return await this.element.isDisplayed();
+      const element = await this.getElement();
+      return await element.isDisplayed();
     } catch (ex) {
       return false;
     }
   }
 
   public async getText() {
-    return await this.element.getText();
+    const element = await this.getElement();
+    return await element.getText();
+  }
+
+  public async isLocated(): Promise<boolean> {
+    return !!(await this.browser.wait(until.elementLocated(this.selector)));
   }
 }
 
 export class Button extends WebComponent {
-  constructor(element: WebElementPromise, selector: string) {
-    super(element, selector);
+  constructor(protected browser: Browser, public selector: By) {
+    super(browser, selector);
   }
 
   public async isDisabled() {
     try {
-      return await this.element.getAttribute('disabled') === 'disabled';
+      const element = await this.getElement();
+      return (await element.getAttribute("disabled")) === "disabled";
     } catch (ex) {
       return false;
     }
@@ -43,11 +60,12 @@ export class Button extends WebComponent {
 }
 
 export class TextInput extends WebComponent {
-  constructor(element: WebElementPromise, selector: string) {
-    super(element, selector);
+  constructor(browser: Browser, selector: By) {
+    super(browser, selector);
   }
 
-  public type(text: string) {
-    return this.element.sendKeys(text);
+  public async type(text: string) {
+    const element = await this.getElement();
+    return element.sendKeys(text);
   }
 }

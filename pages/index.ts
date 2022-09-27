@@ -1,30 +1,26 @@
-import { GoogleSignInPage } from './GoogleSignInPage';
-import { FacebookSignInPage } from './FacebookSignInPage';
-import { HomePage } from './HomePage';
-import { ShowIdeaPage } from './ShowIdeaPage';
-import { Browser } from '../lib';
+import { Browser } from "../lib";
+import { FacebookSignInPage } from "./FacebookSignInPage";
+import { GoogleSignInPage } from "./GoogleSignInPage";
+import { HomePage } from "./HomePage";
+import { RegisterPage } from "./Register";
+import { ShowIdeaPage } from "./ShowIdeaPage";
 
 export {
+  RegisterPage,
+  ShowIdeaPage,
+  HomePage,
   GoogleSignInPage,
   FacebookSignInPage,
-  HomePage,
-  ShowIdeaPage,
 };
 
 export class AllPages {
-    public facebook: FacebookSignInPage;
-    public google: GoogleSignInPage;
-    public home: HomePage;
-    public showIdea: ShowIdeaPage;
+  public register: RegisterPage;
 
-    constructor(public browser: Browser) {
-      this.facebook = new FacebookSignInPage(browser);
-      this.google = new GoogleSignInPage(browser);
-      this.home = new HomePage(browser);
-      this.showIdea = new ShowIdeaPage(browser);
-    }
+  constructor(public browser: Browser) {
+    this.register = new RegisterPage(browser);
+  }
 
-    public async dispose(): Promise<void> {
-      await this.browser.close();
-    }
+  public async dispose(): Promise<void> {
+    await this.browser.close();
+  }
 }
