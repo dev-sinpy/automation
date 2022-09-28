@@ -1,4 +1,4 @@
-import { By, WebElement, WebElementPromise, until } from "selenium-webdriver";
+import { By, WebElement, until, Key } from "selenium-webdriver";
 import { Browser } from ".";
 
 export class WebComponent {
@@ -22,7 +22,7 @@ export class WebComponent {
 
   public async getElement(): Promise<WebElement> {
     await this.browser.wait(until.elementLocated(this.selector));
-    return this.browser.findElementBySelector(this.selector);
+    return await this.browser.findElementBySelector(this.selector);
   }
 
   public async isDisplayed() {
@@ -39,8 +39,29 @@ export class WebComponent {
     return await element.getText();
   }
 
-  public async isLocated(): Promise<boolean> {
-    return !!(await this.browser.wait(until.elementLocated(this.selector)));
+  public async isLocated(timeout: number = 3000): Promise<boolean> {
+    return !!(await this.browser.wait(until.elementLocated(this.selector), timeout));
+  }
+
+  public async clickAndWaitStaleness(waitTime: number = 3000) {
+    const element = await this.getElement();
+    await element.click();
+    await this.browser.wait(until.stalenessOf(element), waitTime);
+  }
+
+  public async waitUntilLocatedAndDisplayed(timeout: number = 3000): Promise<void> {
+    await this.browser.wait(async () => {
+      if (await this.isLocated(5000)) {
+        return this.isDisplayed();
+      } else {
+        return false;
+      }
+    }, timeout);
+  }
+
+  public async sendKeys(key: string | number) {
+    const element = await this.getElement();
+    return await element.sendKeys(key);
   }
 }
 
@@ -64,8 +85,14 @@ export class TextInput extends WebComponent {
     super(browser, selector);
   }
 
+  public async pressTabAndType(text: string) {
+    await this.browser.getDriver().actions().sendKeys(Key.TAB).perform();
+    const element = await this.getElement();
+    return await element.sendKeys(text);
+  }
+
   public async type(text: string) {
     const element = await this.getElement();
-    return element.sendKeys(text);
+    return await element.sendKeys(text);
   }
 }

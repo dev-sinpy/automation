@@ -1,4 +1,4 @@
-import { By } from "selenium-webdriver";
+import { By, Key } from "selenium-webdriver";
 import config from "../config";
 import {
   WebComponent,
@@ -13,16 +13,23 @@ import {
 export class RegisterPage extends Page {
   constructor(browser: Browser) {
     super(browser);
-    this.setUrl(`${config.baseUrl}/registration`);
+    this.setUrl(`${config.baseUrl}/registration/business`);
   }
-
-  @findBy(
-    By.xpath('//input[@formcontrolname="firstName"]/parent::div/parent::div')
-  )
-  public FirstNameLabel: TextInput;
 
   @findBy(By.css('input[formcontrolname="firstName"]'))
   public FirstName: TextInput;
+
+  @findBy(By.css('input[formcontrolname="lastName"]'))
+  public LastName: TextInput;
+
+  @findBy(By.css('input[formcontrolname="email"]'))
+  public Email: TextInput;
+
+  @findBy(By.css('input[formcontrolname="password"]'))
+  public Password: TextInput;
+
+  @findBy(By.css('input[formcontrolname="confirmPass"]'))
+  public ConfirmPassword: TextInput;
 
   @findBy(By.css('button[type="submit"]'))
   public Signup: Button;
@@ -34,16 +41,12 @@ export class RegisterPage extends Page {
   }
 
   public async signIn() {
-    console.log(
-      await this.FirstName.isLocated(),
-      await this.FirstName.isDisplayed()
-    );
-    await this.browser.sleep(5000);
-    console.log(
-      await this.FirstName.isLocated(),
-      await this.FirstName.isDisplayed()
-    );
-    await this.FirstName.type("talwinder");
+    await this.Signup.waitUntilLocatedAndDisplayed(10000);
+    await this.FirstName.pressTabAndType("Talwinder");
+    await this.LastName.pressTabAndType("Singh");
+    await this.Email.pressTabAndType("singhtalwinder756@gmail.com");
+    await this.Password.pressTabAndType("Talwinder@1234");
+    await this.ConfirmPassword.pressTabAndType("Talwinder@1234");
     await this.Signup.click();
     await this.browser.sleep(5000);
   }

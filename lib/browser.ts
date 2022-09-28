@@ -14,6 +14,10 @@ export class Browser {
     this.driver = new Builder().forBrowser(browserName).build();
   }
 
+  public getDriver(): ThenableWebDriver {
+    return this.driver;
+  }
+
   public async navigate(url: string): Promise<void> {
     await this.driver.navigate().to(url);
   }
